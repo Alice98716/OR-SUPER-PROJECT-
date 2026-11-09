@@ -1,0 +1,14 @@
+{
+    "ProblemNum": 0,
+    "HorizonLen": 24,
+    "NumThermal": 10,
+    "NumHydro": 0,
+    "NumCascade": 0,
+    "MinSystemCapacity": 553.0,
+    "MaxSystemCapacity": 1809.0,
+    "MaxThermalCapacity": 1809.0,
+    "Loads": [
+        1,
+        24
+    ]
+}
