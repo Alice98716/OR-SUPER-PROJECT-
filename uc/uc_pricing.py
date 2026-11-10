@@ -10,11 +10,7 @@ class GeneratorPricing:
         self.T = T
         hours = range(T)
         
-        self.u = self.m.addVars(T, vtype=GRB.BINARY, name="u")
-        self.p = self.m.addVars(T, vtype=GRB.CONTINUOUS, name="p")
-        self.v = self.m.addVars(T, vtype=GRB.CONTINUOUS, name="v")
-        self.w = self.m.addVars(T, vtype=GRB.CONTINUOUS, name="w")
-        u, p, v, w = self.u, self.p, self.v, self.w
+        
         self.max_out = gen["max_out"][g]
         self.nol_cost = gen["nol_cost"][g]
         self.mar_cost = gen["mar_cost"][g]
@@ -30,7 +26,16 @@ class GeneratorPricing:
 
         self.m = gp.Model("GeneratorPricing")
         self.m.setParam('OutputFlag', 0) 
+        self.m.setParam('IntFeasTol', 1e-9)
+
         self.m.ModelSense=GRB.MINIMIZE # Suppress Gurobi output
+
+        self.u = self.m.addVars(T, vtype=GRB.BINARY, name="u")
+        self.p = self.m.addVars(T, vtype=GRB.CONTINUOUS, name="p")
+        self.v = self.m.addVars(T, vtype=GRB.CONTINUOUS, name="v")
+        self.w = self.m.addVars(T, vtype=GRB.CONTINUOUS, name="w")
+        u, p, v, w = self.u, self.p, self.v, self.w
+        
         self.m.addConstrs((min_out * u[t] <= p[t] for t in hours), name="out_lo")
         self.m.addConstrs((p[t] <= self.max_out * u[t] for t in hours), name="out_hi")
 
