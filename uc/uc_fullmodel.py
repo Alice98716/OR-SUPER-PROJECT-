@@ -25,8 +25,12 @@ INSTANCE = "10_0_1_w"  # <n_generators>_0_<problem>_w
 DATA_DIR = ROOT / "data" / "generators" / "out"
 
 gen = load_generators(DATA_DIR / f"{INSTANCE}.csv")
-demand = np.loadtxt(DATA_DIR / f"{INSTANCE}_load.txt")
-reserve = np.loadtxt(DATA_DIR / f"{INSTANCE}_spinning_reserve.txt")
+n_periods = 48                                   
+t = np.arange(n_periods)
+capacity = gen["max_out"].sum()
+shape = 0.8 + 0.2 * np.sin(2 * np.pi * (t - 12) / n_periods)   #between 0.6 and 1.0
+demand = 0.5 * capacity * shape                  #peak = 50% of capacity
+
 
 G = range(gen["n_g"])   # generators
 T = range(len(demand))  # hours
