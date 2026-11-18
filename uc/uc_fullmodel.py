@@ -19,25 +19,26 @@ sys.path.insert(0, str(ROOT))
 from uc.data import load_generators
 from uc.uc_bound import DualPricing
 
-#import data
+if __name__ == "__main__":
+    #import data
 
-INSTANCE = "10_0_1_w"  # <n_generators>_0_<problem>_w
-DATA_DIR = ROOT / "data" / "generators" / "out"
+    INSTANCE = "200_0_1_w"  # <n_generators>_0_<problem>_w
+    DATA_DIR = ROOT / "data" / "generators" / "out"
 
-gen = load_generators(DATA_DIR / f"{INSTANCE}.csv")
-n_periods = 48                                   
-t = np.arange(n_periods)
-capacity = gen["max_out"].sum()
-shape = 0.8 + 0.2 * np.sin(2 * np.pi * (t - 12) / n_periods)   #between 0.6 and 1.0
-demand = 0.5 * capacity * shape                  #peak = 50% of capacity
+    gen = load_generators(DATA_DIR / f"{INSTANCE}.csv")
+    n_periods = 48                                   
+    t = np.arange(n_periods)
+    capacity = gen["max_out"].sum()
+    shape = 0.8 + 0.2 * np.sin(2 * np.pi * (t - 12) / n_periods)   #between 0.6 and 1.0
+    demand = 0.5 * capacity * shape                  #peak = 50% of capacity
 
 
-G = range(gen["n_g"])   # generators
-T = range(len(demand))  # hours
+    G = range(gen["n_g"])   # generators
+    T = range(len(demand))  # hours
 
-print(f"{gen['n_g']} generators, {len(T)} hours")
-print(f"demand: {demand.min():.0f}-{demand.max():.0f} MW, total capacity: {gen['max_out'].sum():.0f} MW")
-pd.DataFrame({k: v for k, v in gen.items() if k != "n_g"})
+    print(f"{gen['n_g']} generators, {len(T)} hours")
+    print(f"demand: {demand.min():.0f}-{demand.max():.0f} MW, total capacity: {gen['max_out'].sum():.0f} MW")
+    pd.DataFrame({k: v for k, v in gen.items() if k != "n_g"})
 
 
 #Model NEED TO REWRITE ALL THE MARKDOWNS. This follows the notation of previous notebookss
@@ -101,10 +102,11 @@ def solve_uc_model(gen, demand, reserve_rate=0.1):
     return m.ObjVal, y_d, y_r 
 
 
-lp_obj, y_d, y_r = solve_uc_model(gen, demand)
-bound = DualPricing(gen, demand, T=len(demand))
-q_lpr, _, _ = bound.evaluate(y_d, y_r)
-print("LP objective:", lp_obj)
-print("q(y_LPR):   ", q_lpr)
-print("q >= LP:    ", q_lpr >= lp_obj - 1e-6)
-print("min duals:  ", y_d.min(), y_r.min())   # both should be >= 0
+if __name__ == "__main__":
+    lp_obj, y_d, y_r = solve_uc_model(gen, demand)
+    bound = DualPricing(gen, demand, T=len(demand))
+    q_lpr, _, _ = bound.evaluate(y_d, y_r)
+    print("LP objective:", lp_obj)
+    print("q(y_LPR):   ", q_lpr)
+    print("q >= LP:    ", q_lpr >= lp_obj - 1e-6)
+    print("min duals:  ", y_d.min(), y_r.min())   # both should be >= 0

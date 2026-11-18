@@ -20,7 +20,16 @@ class DualPricing:
             pr = GeneratorPricing(gen, g, T)
             self.pricers.append(pr)
 
-    def evaluate(self, y_d, y_r): 
+    def set_demand(self, demand):
+        """Change the demand without rebuilding the pricers (they do not depend on it)."""
+        D = np.asarray(demand, dtype=float)
+        if len(D) != self.T:
+            raise ValueError(f"demand has {len(D)} values, expected T = {self.T}")
+        self.demand = demand
+        self.D = D
+        self.R = self.reserve_rate * self.D
+
+    def evaluate(self, y_d, y_r):
         y_d = np.asarray(y_d, dtype = float)
         y_r = np.asarray(y_r, dtype = float)
 
